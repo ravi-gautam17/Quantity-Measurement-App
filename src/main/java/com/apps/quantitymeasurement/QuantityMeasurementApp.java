@@ -89,6 +89,13 @@ public class QuantityMeasurementApp {
     	l=l.convertTo(toUnit);
     	return l;
     }
+    
+    public static Length demonstrateLengthAddition(Length l1, Length l2) throws IllegalArgumentException {
+    	if(l1==null || l2 == null) {
+    		throw new IllegalArgumentException("Value cannot be null");
+    	}
+    	return l1.add(l2);
+    }
 	public static void main(String[] args) {
 		Feet f1 = new Feet(1.0);
 		Feet f2 = new Feet(1.0);
@@ -122,5 +129,21 @@ public class QuantityMeasurementApp {
 	   System.out.println("Convert Centimeters to Inches: "+ demonstrateLengthComparison(new Length(1, LengthUnit.CENTIMETERS),LengthUnit.INCHES));
 	   
 	   System.out.println("Convert to Feet to Inches: "+ demonstrateLengthComparison(new Length(0, LengthUnit.FEET), LengthUnit.INCHES));
+	   
+	   System.out.println("Addition feet to feet: "+ demonstrateLengthAddition(new Length(1,LengthUnit.FEET), new Length(2,LengthUnit.FEET)));
+	   
+	   System.out.println("Addition feet and Inches: "+demonstrateLengthAddition(new Length(1,LengthUnit.FEET), new Length(12, LengthUnit.INCHES)));
+	   
+	   System.out.println("Addition Inches and feet: "+demonstrateLengthAddition(new Length(12,LengthUnit.INCHES), new Length(1,LengthUnit.FEET)));
+	   
+	   System.out.println("Addition Yards and feet: "+demonstrateLengthAddition(new Length(1, LengthUnit.YARDS), new Length(3, LengthUnit.FEET)));
+	   
+	   System.out.println("Addition Inches and Yards: "+demonstrateLengthAddition(new Length(36, LengthUnit.INCHES), new Length(1, LengthUnit.YARDS)));
+	   
+	   System.out.println("Addition Centimeter and Inches: "+demonstrateLengthAddition(new Length(2.54, LengthUnit.CENTIMETERS), new Length(1, LengthUnit.INCHES)));
+	   
+	   System.out.println("Addition Feet and Inches: "+demonstrateLengthAddition(new Length(5, LengthUnit.FEET), new Length(0, LengthUnit.INCHES)));
+	   
+	   System.out.println("Addition Feet and Feet: "+demonstrateLengthAddition(new Length(5, LengthUnit.FEET), new Length(-2, LengthUnit.FEET)));
 	}
 }
