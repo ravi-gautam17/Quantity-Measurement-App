@@ -27,6 +27,7 @@ public class QuantityMeasurementAppTest {
     }
 
     @Test
+    
     public void sameFeetReference() {
         Feet feet1 = new Feet(1.0);
         Assertions.assertEquals(feet1, feet1);
