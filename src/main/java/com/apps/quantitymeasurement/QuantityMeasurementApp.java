@@ -92,5 +92,13 @@ public class QuantityMeasurementApp {
 	    demonstrateInchesEquality(1, 1);
 	    demonstrateFeetInchComparison();
 	   System.out.println("Are lengths equals : "+ demonstrateLengthEquality(new Length(1,LengthUnit.FEET),new Length(12,Length.LengthUnit.INCHES)));
+	   
+	   Length l1 = new Length(1, LengthUnit.YARDS);
+	   Length l2 = new Length(36, LengthUnit.INCHES);
+	   System.out.println("Are lengths equal? "+ demonstrateLengthEquality(l1, l2));
+	   
+	   Length l3 = new Length(100, LengthUnit.CENTIMETERS);
+	   Length l4 = new Length(39.3701, LengthUnit.INCHES);
+	   System.out.println("Are lengths equal? "+demonstrateLengthEquality(l3, l4));
 	}
 }
