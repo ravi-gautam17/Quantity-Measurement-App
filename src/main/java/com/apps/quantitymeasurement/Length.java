@@ -57,7 +57,18 @@ public class Length {
 	    public int hashCode() {
 	        return Objects.hash(convertToBaseUnit());
 	    }
+	public double getValue() {
+		return this.value;
+	}
+	@Override 
+	public String toString() {
+		return "Length [value="+value+", unit="+unit+"]";
+	}
 	
+	public Length convertTo(LengthUnit unit) throws IllegalArgumentException{
+		double convert = (this.value*this.unit.getConversionFactor())/ unit.getConversionFactor();
+		return new Length(convert, unit);
+	}
 	public static void main(String[] args) {
 		Length len1 = new Length(1,Length.LengthUnit.INCHES);
 		Length len2 = new Length(12,Length.LengthUnit.INCHES);
