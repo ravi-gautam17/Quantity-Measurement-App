@@ -1,12 +1,18 @@
 package com.apps.quantitymeasurement;
 
+import java.util.Objects;
+
 public class Length {
+	
+	private static final double EPSILON = 0.0001;
 	private double value;
 	private LengthUnit unit;
 	
 	public enum LengthUnit{
 		FEET(12.0),
-		INCHES(1.0);
+		INCHES(1.0),
+		YARDS(36.0),
+		CENTIMETERS(0.393701);
 		
 		private final double conversionFactor;
 		
@@ -20,8 +26,11 @@ public class Length {
 	}
 	
 	public Length(double value, LengthUnit unit) {
-		if(Double.isNaN(value)) {
-			throw new IllegalArgumentException("Invalid Exception");
+		if(Double.isNaN(value) || Double.isInfinite(value)) {
+			throw new IllegalArgumentException("Invalid numeric value");
+		}
+		if(unit ==null) {
+			throw new IllegalArgumentException("Unit cannot be null");
 		}
 		this.value= value;
 		this.unit=unit;
@@ -31,10 +40,9 @@ public class Length {
 		return value*unit.getConversionFactor();
 	}
 	public boolean compare(Length lengthUnit) {
-		if(convertToBaseUnit()==lengthUnit.convertToBaseUnit()) {
-			return true;
-		}
-		return false;
+		if(lengthUnit==null) return false;
+		
+		return Math.abs(this.convertToBaseUnit()-lengthUnit.convertToBaseUnit()) <EPSILON;
 	}
 	
 	@Override 
@@ -45,11 +53,25 @@ public class Length {
 		Length l = (Length)obj;
 		return this.compare(l);
 	}
+	 @Override
+	    public int hashCode() {
+	        return Objects.hash(convertToBaseUnit());
+	    }
 	
 	public static void main(String[] args) {
 		Length len1 = new Length(1,Length.LengthUnit.INCHES);
 		Length len2 = new Length(12,Length.LengthUnit.INCHES);
 		
 		System.out.println("Are Length equals? :"+len1.equals(len2));
+		
+		Length len3 = new Length(1, Length.LengthUnit.YARDS);
+		Length len4 = new Length(36, Length.LengthUnit.INCHES);
+		
+		System.out.println("Are Length equals? :"+len3.equals(len4));
+		
+		Length len5 = new Length(100, LengthUnit.CENTIMETERS);
+		Length len6 = new Length(39.3701, LengthUnit.INCHES);
+		
+		System.out.println("Are Length equals? :"+len5.equals(len6));
 	}
 }
