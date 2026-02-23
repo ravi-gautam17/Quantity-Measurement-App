@@ -101,6 +101,35 @@ public class QuantityMeasurementApp {
     		throw new IllegalArgumentException("Value cannot be null");
     	return l1.addAndConvert(l2, unit);
     }
+    
+    public static boolean demonstrateWeightEquality(Weight w1, Weight w2) {
+    	return w1.equals(w2);
+    }
+    public static boolean demonstrateWeightComparison(Weight w1, Weight w2) {
+    	return w1.compare(w2);
+    }
+    
+    public static Weight demonstrateWeightConversion(Double value, WeightUnit unit, WeightUnit toUnit) throws IllegalArgumentException {
+    	
+    	if(value==null || unit==null || toUnit==null) {
+    		throw new IllegalArgumentException("value and unit cannot be null");
+    	}
+    	Weight w = new Weight(value, unit);
+    	return w.convertTo(toUnit);
+    }
+    public static Weight demonstrateWeightConversion(Weight w, WeightUnit unit) throws IllegalArgumentException {
+    	if(w==null || unit==null) throw new IllegalArgumentException("Weight and unit cannot be null");
+    	
+    	return w.convertTo(unit);
+    }
+    public static Weight demonstrateWeightAddition(Weight w1, Weight w2) {
+    	Weight ans = w1.add(w2);
+    	return ans;
+    }
+    public static Weight demonstrateWeightAddition(Weight w1, Weight w2, WeightUnit unit) {
+    	Weight ans = w1.add(w2);
+    	return ans.convertTo(unit);
+    }
 	public static void main(String[] args) {
 		Feet f1 = new Feet(1.0);
 		Feet f2 = new Feet(1.0);
@@ -178,5 +207,41 @@ public class QuantityMeasurementApp {
 	   System.out.println("Convert To Base Unit: "+LengthUnit.FEET.convertToBaseUnit(12));
 	   
 	   System.out.println("Convert Inches To Base Unit: "+LengthUnit.INCHES.convertToBaseUnit(12));
+	   
+	   System.out.println("Convert Kilogram to gram: "+QuantityMeasurementApp.demonstrateWeightConversion(new Weight(1, WeightUnit.KILOGRAM), WeightUnit.GRAM));
+	   
+	   System.out.println("Convert Kilogram to Pound: "+QuantityMeasurementApp.demonstrateWeightConversion(new Weight(1, WeightUnit.KILOGRAM), WeightUnit.POUND));
+	   
+	   System.out.println("Check Kilogram and gram equality: "+QuantityMeasurementApp.demonstrateWeightEquality(new Weight(1,WeightUnit.KILOGRAM), new Weight(1000, WeightUnit.GRAM)));
+	   
+	   System.out.println("Check Kilogram to Pount equality: "+QuantityMeasurementApp.demonstrateWeightEquality(new Weight(1, WeightUnit.KILOGRAM), new Weight(2.20462, WeightUnit.POUND)));
+	   
+	   System.out.println("Check Kilogram to Kilogram equality: "+ QuantityMeasurementApp.demonstrateWeightEquality(new Weight(1,WeightUnit.KILOGRAM), new Weight(1, WeightUnit.KILOGRAM)));
+	   
+	   System.out.println("Check Pound to Pount equality: "+ QuantityMeasurementApp.demonstrateWeightEquality(new Weight(2,WeightUnit.POUND), new Weight(2, WeightUnit.POUND)));
+	   
+	   System.out.println("Check Pount to Gram equality: "+ QuantityMeasurementApp.demonstrateWeightEquality(new Weight(1,WeightUnit.POUND), new Weight(453.592, WeightUnit.GRAM)));
+	   
+	   System.out.println("Check Gram to Kilogram equality: "+ QuantityMeasurementApp.demonstrateWeightEquality(new Weight(500, WeightUnit.GRAM), new Weight(0.5, WeightUnit.KILOGRAM)));
+	   
+	   System.out.println("Convert Pount to Kilogram: "+ QuantityMeasurementApp.demonstrateWeightConversion(new Weight(2,WeightUnit.POUND), WeightUnit.KILOGRAM));
+	   
+	   System.out.println("Convert Gram to Pound: "+ QuantityMeasurementApp.demonstrateWeightConversion(new Weight(500, WeightUnit.GRAM), WeightUnit.POUND));
+	   
+	   System.out.println("Convert Kilogram to Gram: "+QuantityMeasurementApp.demonstrateWeightConversion(0.0, WeightUnit.KILOGRAM, WeightUnit.GRAM));
+	   
+	   System.out.println("Addition Kilogram to Kilogram: "+QuantityMeasurementApp.demonstrateWeightAddition(new Weight(1,WeightUnit.KILOGRAM), new Weight(2, WeightUnit.KILOGRAM)));
+	   
+	   System.out.println("Addition Kilogram and Gram: "+QuantityMeasurementApp.demonstrateWeightAddition(new Weight(1, WeightUnit.KILOGRAM), new Weight(500, WeightUnit.GRAM)));
+	   
+	   System.out.println("Addition Gram and Kilogram: "+QuantityMeasurementApp.demonstrateWeightAddition(new Weight(500, WeightUnit.GRAM), new Weight(0.5, WeightUnit.KILOGRAM)));
+	   
+	   System.out.println("Addition Kilogram and Gram then convert to Gram: "+ QuantityMeasurementApp.demonstrateWeightAddition(new Weight(1, WeightUnit.KILOGRAM), new Weight(1000, WeightUnit.GRAM), WeightUnit.GRAM));
+	   
+	   System.out.println("Addition Pound and Gram then convert to Pound: "+ QuantityMeasurementApp.demonstrateWeightAddition(new Weight(1, WeightUnit.POUND), new Weight(453.592, WeightUnit.GRAM), WeightUnit.POUND));
+	   
+	   System.out.println("Addition Kilogram and Pound then convert to Kilogram: "+QuantityMeasurementApp.demonstrateWeightAddition(new Weight(2, WeightUnit.KILOGRAM), new Weight(4, WeightUnit.POUND), WeightUnit.KILOGRAM));
+	   
+	   
 	}
 }
