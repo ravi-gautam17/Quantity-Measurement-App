@@ -96,6 +96,12 @@ public class QuantityMeasurementApp {
     	}
     	return l1.add(l2);
     }
+    
+    public static Length demonstrateLengthAddition(Length l1, Length l2, LengthUnit unit) throws IllegalArgumentException {
+    	if(l1==null || l2==null || unit ==null)
+    		throw new IllegalArgumentException("Value cannot be null");
+    	return l1.addAndConvert(l2, unit);
+    }
 	public static void main(String[] args) {
 		Feet f1 = new Feet(1.0);
 		Feet f2 = new Feet(1.0);
@@ -145,5 +151,23 @@ public class QuantityMeasurementApp {
 	   System.out.println("Addition Feet and Inches: "+demonstrateLengthAddition(new Length(5, LengthUnit.FEET), new Length(0, LengthUnit.INCHES)));
 	   
 	   System.out.println("Addition Feet and Feet: "+demonstrateLengthAddition(new Length(5, LengthUnit.FEET), new Length(-2, LengthUnit.FEET)));
+	   
+	   System.out.println("Addition feet and Inches then conversion: "+demonstrateLengthAddition(new Length(1, LengthUnit.FEET), new Length(12, LengthUnit.INCHES), LengthUnit.FEET));
+	   
+	   System.out.println("Addition Feet and Inches then convert to Inches: "+demonstrateLengthAddition(new Length(1,LengthUnit.FEET), new Length(12, LengthUnit.INCHES), LengthUnit.INCHES));
+	   
+	   System.out.println("Addition Feet and Inches then convert to Yards: "+demonstrateLengthAddition(new Length(1, LengthUnit.FEET), new Length(12,LengthUnit.INCHES), LengthUnit.YARDS));
+	   
+	   System.out.println("Addition Yards and Feet then convert to Yards: "+demonstrateLengthAddition(new Length(1, LengthUnit.YARDS), new Length(3, LengthUnit.FEET),LengthUnit.YARDS));
+	   
+	   System.out.println("Addition Inches ans Yards then convert to Feet: "+demonstrateLengthAddition(new Length(36, LengthUnit.INCHES), new Length(1,LengthUnit.YARDS), LengthUnit.FEET));
+	   
+	   System.out.println("Addition Centimeter and Inches then convert to Centimeters: "+demonstrateLengthAddition(new Length(2.54, LengthUnit.CENTIMETERS), new Length(1, LengthUnit.INCHES), LengthUnit.CENTIMETERS));
+	   
+	   System.out.println("Addition Feet and Inches then convert to Yards: "+demonstrateLengthAddition(new Length(5, LengthUnit.FEET), new Length(0, LengthUnit.INCHES), LengthUnit.YARDS));
+	  
+	   System.out.println("Addition Feet and Feet then convert to Inches: "+demonstrateLengthAddition(new Length(5, LengthUnit.FEET), new Length(-2, LengthUnit.FEET), LengthUnit.INCHES));
+	   
+	   
 	}
 }
