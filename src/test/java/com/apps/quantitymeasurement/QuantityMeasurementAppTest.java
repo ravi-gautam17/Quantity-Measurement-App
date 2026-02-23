@@ -2,7 +2,7 @@ package com.apps.quantitymeasurement;
 
 import com.apps.quantitymeasurement.QuantityMeasurementApp.*;
 import com.apps.quantitymeasurement.Length;
-import com.apps.quantitymeasurement.Length.LengthUnit;
+import com.apps.quantitymeasurement.LengthUnit;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -233,7 +233,7 @@ public class QuantityMeasurementAppTest {
     	Length len1 = new Length(2,LengthUnit.YARDS);
     	Length len2 = new Length(6,LengthUnit.FEET);
     	Length len3 = new Length(72,LengthUnit.INCHES);
-    	Assertions.assertTrue(len1.equals(len2)&&len1.equals(len3));
+    	Assertions.assertTrue(len1.equals(len2) && len1.equals(len3));
     }
     
     @Test 
@@ -495,6 +495,95 @@ public class QuantityMeasurementAppTest {
     	Assertions.assertEquals(0.667, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2, LengthUnit.YARDS).getValue(), 0.001);
     }
     
-//    @Test
-//    public void 
+    @Test
+    public void testLengthUnitEnum_FeetConstant() {
+    	Assertions.assertEquals(1.0, LengthUnit.FEET.getConversionFactor());
+    }
+    
+    @Test
+    public void testLengthUnitEnum_InchesConstant() {
+    	Assertions.assertEquals(0.0833, LengthUnit.INCHES.getConversionFactor(),0.0001);
+    }
+    
+    @Test
+    public void testLengthUnitEnum_YardsConstant() {
+    	Assertions.assertEquals(3.0, LengthUnit.YARDS.getConversionFactor());
+    }
+    
+    @Test
+    public void testLengthUnitEnum_CentimetersConstant() {
+    	Assertions.assertEquals(0.0328, LengthUnit.CENTIMETERS.getConversionFactor(), 0.0001);
+    }
+    
+    @Test
+    public void testConvertToBaseUnit_FeetToFeet() {
+    	Assertions.assertEquals(5.0, LengthUnit.FEET.convertToBaseUnit(5));
+    }
+    
+    @Test
+    public void testConvertToBaseUnit_InchesToFeet() {
+    	Assertions.assertEquals(1.0, LengthUnit.INCHES.convertToBaseUnit(12));
+    }
+    
+    @Test
+    public void testConvertToBaseUnit_YardsToFeet() {
+    	Assertions.assertEquals(3.0, LengthUnit.YARDS.convertToBaseUnit(1));
+    }
+    
+    @Test
+    public void testConvertToBaseUnit_CentimetersToFeet() {
+    	Assertions.assertEquals(1.0, LengthUnit.CENTIMETERS.convertToBaseUnit(30.48), 0.1);
+    }
+    
+    @Test
+    public void testConvertFromBaseUnit_FeetToFeet() {
+    	Assertions.assertEquals(1.0, LengthUnit.FEET.convertFromBaseUnit(1.0));
+    }
+    
+    @Test
+    public void testConvertFromBaseUnit_FeetToInches() {
+    	Assertions.assertEquals(12.0, LengthUnit.INCHES.convertFromBaseUnit(1));
+    }
+    
+    @Test
+    public void testConvertFromBaseUnit_FeetToYards() {
+    	Assertions.assertEquals(1.0, LengthUnit.YARDS.convertFromBaseUnit(3));
+    }
+    
+    @Test
+    public void testConvertFromBaseUnit_FeetToCentimeters() {
+    	Assertions.assertEquals(30.48, LengthUnit.CENTIMETERS.convertFromBaseUnit(1), 0.01);
+    }
+    
+    @Test
+    public void testQuantityLengthRefactored_Equality() {
+    	Assertions.assertTrue(QuantityMeasurementApp.demonstrateLengthEquality(new Length(1, LengthUnit.FEET),new Length(12, LengthUnit.INCHES)));
+    }
+    
+    @Test
+    public void testQuantityLengthRefactored_ConvertTo() {
+    	Assertions.assertEquals(12.0,QuantityMeasurementApp.demonstrateLengthConversion(1.0, LengthUnit.FEET,LengthUnit.INCHES).getValue(),0.1);
+    }
+    
+    @Test
+    public void testQuantityLengthRefactored_Add() {
+    	Assertions.assertEquals(2.0,QuantityMeasurementApp.demonstrateLengthAddition(new Length(1, LengthUnit.FEET),new Length(12, LengthUnit.INCHES), LengthUnit.FEET).getValue());
+    }
+    
+    @Test
+    public void testQuantityLengthRefactored_AddWithTargetUnit() {
+    	Assertions.assertEquals(0.667,QuantityMeasurementApp.demonstrateLengthAddition(new Length(1, LengthUnit.FEET), new Length(12, LengthUnit.INCHES), LengthUnit.YARDS).getValue(),0.001);
+    }
+    
+    @Test
+    public void testQuantityLengthRefactored_NullUnit() {
+    	Assertions.assertThrows(IllegalArgumentException.class, ()-> { new Length(1, null); });
+    }
+    
+    @Test 
+    public void testQuantityLengthRefactored_InvalidValue() {
+    	Assertions.assertThrows(IllegalArgumentException.class, ()->{new Length(Double.NaN, LengthUnit.FEET); });
+    }
+    
+   
 }
