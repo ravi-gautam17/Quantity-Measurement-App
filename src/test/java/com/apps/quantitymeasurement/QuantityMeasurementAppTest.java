@@ -311,4 +311,99 @@ public class QuantityMeasurementAppTest {
     			.demonstrateLengthConversion(2.54, LengthUnit.CENTIMETERS,LengthUnit.INCHES)
     			.getValue(), 1e-6);
     }
+    
+    @Test
+    public void testAddition_SameUnit_FeetPlusFeet() {
+    	Length l1 = new Length(1, LengthUnit.FEET);
+    	Length l2 = new Length(2, LengthUnit.FEET);
+    	
+    	Assertions.assertEquals(3.0, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2).getValue());
+    }
+    
+    @Test
+    public void testAddition_SameUnit_InchPlusInch() {
+    	Length l1 = new Length(6, LengthUnit.INCHES);
+    	Length l2 = new Length(6, LengthUnit.INCHES);
+    	
+    	Assertions.assertEquals(12.0, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2).getValue());
+    }
+    
+    @Test 
+    public void testAddition_CrossUnit_FeetPlusInches() {
+    	Length l1 = new Length(1, LengthUnit.FEET);
+    	Length l2 = new Length(12, LengthUnit.INCHES);
+    	
+    	Assertions.assertEquals(2.0, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2).getValue());
+    }
+    
+    @Test
+    public void testAddition_CrossUnit_InchPlusFeet() {
+    	Length l1 = new Length(12, LengthUnit.INCHES);
+    	Length l2 = new Length(1, LengthUnit.FEET);
+    	
+    	Assertions.assertEquals(24.0, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2).getValue());
+    }
+    
+    @Test 
+    public void testAddition_CrossUnit_YardPlusFeet() {
+    	Length l1 = new Length(1, LengthUnit.YARDS);
+    	Length l2 = new Length(3, LengthUnit.FEET);
+    	
+    	Assertions.assertEquals(2, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2).getValue());
+    }
+    
+    @Test
+    public void testAddition_CrossUnit_CentimeterPlusInch() {
+    	Length l1 = new Length(2.54, LengthUnit.CENTIMETERS);
+    	Length l2 = new Length(1, LengthUnit.INCHES);
+    	
+    	Assertions.assertEquals(5.08, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2).getValue(),0.001);
+    }
+    
+    @Test
+    public void testAddition_Commutativity() {
+    	Length l1 = new Length(1, LengthUnit.FEET);
+    	Length l2 = new Length(12, LengthUnit.INCHES);
+    	
+    	Assertions.assertEquals(QuantityMeasurementApp.demonstrateLengthAddition(l1, l2).getValue(), QuantityMeasurementApp.demonstrateLengthAddition(l2, l1).convertTo(LengthUnit.FEET).getValue());
+    }
+    
+    @Test
+    public void testAddition_WithZero() {
+    	Length l1 = new Length(5, LengthUnit.FEET);
+    	Length l2 = new Length(0, LengthUnit.FEET);
+    	
+    	Assertions.assertEquals(5.0, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2).getValue());
+    }
+    
+    @Test
+    public void testAddition_NegativeValues() {
+    	Length l1 = new Length(5, LengthUnit.FEET);
+    	Length l2 = new Length(-2, LengthUnit.FEET);
+    	
+    	Assertions.assertEquals(3.0, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2).getValue());
+    	
+    }
+    
+    @Test
+    public void testAddition_NullSecondOperand() {
+    	Length l1 = new Length(1, LengthUnit.FEET);
+    	Assertions.assertThrows(IllegalArgumentException.class,()-> { QuantityMeasurementApp.demonstrateLengthAddition(l1, null);});
+    }
+    
+    @Test
+    public void testAddition_LargeValues() {
+    	Length l1 = new Length(1e6, LengthUnit.FEET);
+    	Length l2 = new Length(1e6, LengthUnit.FEET);
+    	
+    	Assertions.assertEquals(2e6, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2).getValue());
+    }
+    
+    @Test
+    public void testAddition_SmallValues() {
+    	Length l1 = new Length(0.001, LengthUnit.FEET);
+    	Length l2 = new Length(0.002, LengthUnit.FEET);
+    	
+    	Assertions.assertEquals(0.003, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2).getValue(), 0.001);
+    }
 }
