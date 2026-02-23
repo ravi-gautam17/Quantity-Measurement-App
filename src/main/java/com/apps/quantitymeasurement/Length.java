@@ -45,6 +45,14 @@ public class Length {
 		return Math.abs(this.convertToBaseUnit()-lengthUnit.convertToBaseUnit()) <EPSILON;
 	}
 	
+	public Length add(Length l) throws IllegalArgumentException {
+		Length len1 = l.convertTo(this.unit);
+		
+		Length ans = new Length(this.value+len1.getValue(), this.unit);
+		
+		return ans;
+	}
+	
 	@Override 
 	public boolean equals(Object obj) {
 		if(this==obj) return true;
