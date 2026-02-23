@@ -235,4 +235,80 @@ public class QuantityMeasurementAppTest {
     	Length len3 = new Length(72,LengthUnit.INCHES);
     	Assertions.assertTrue(len1.equals(len2)&&len1.equals(len3));
     }
+    
+    @Test 
+    public void testConversion_FeetToInches() {
+    	Length l1 = new Length(1, LengthUnit.FEET);
+    	Assertions.assertEquals(12.0, l1.convertTo(LengthUnit.INCHES).getValue());
+    }
+    
+    @Test 
+    public void testConversion_InchesToFeet() {
+    	Length l = new Length(24, LengthUnit.INCHES);
+    	Assertions.assertEquals(2.0, l.convertTo(LengthUnit.FEET).getValue());
+    }
+    
+    @Test
+    public void testConversion_YardsToInches() {
+    	Length l = new Length(1, LengthUnit.YARDS);
+    	Assertions.assertEquals(36.0, l.convertTo(LengthUnit.INCHES).getValue());
+    }
+    
+    @Test
+    public void testConversion_InchesToYards() {
+    	Length l = new Length(72, LengthUnit.INCHES);
+    	Assertions.assertEquals(2.0, l.convertTo(LengthUnit.YARDS).getValue());
+    }
+    
+    @Test 
+    public void testConversion_CentimetersToInches() {
+    	Length l = new Length(2.54, LengthUnit.CENTIMETERS);
+    	Assertions.assertEquals(1.0, l.convertTo(LengthUnit.INCHES).getValue(), 0.0001);
+    }
+    
+    @Test
+    public void testConversion_FeetToYard() {
+    	Length l = new Length(6,LengthUnit.FEET);
+    	Assertions.assertEquals(2.0, l.convertTo(LengthUnit.YARDS).getValue());
+    }
+    
+    @Test
+    public void testConversion_RoundTrip_PreservesValue() {
+    	 Assertions.assertEquals(12,QuantityMeasurementApp
+    			 .demonstrateLengthConversion(QuantityMeasurementApp.demonstrateLengthConversion(12.0,LengthUnit.INCHES, LengthUnit.FEET).getValue(), LengthUnit.FEET, LengthUnit.INCHES).getValue());            
+    }
+    
+    @Test 
+    public void testConversion_ZeroValue() {
+    	Length l1 = new Length(0, LengthUnit.FEET);
+    	Assertions.assertEquals(0, l1.convertTo(LengthUnit.YARDS).getValue());
+    }
+    
+    @Test
+    public void testConversion_NegativeValue() {
+    	Assertions.assertEquals(-12, QuantityMeasurementApp
+    			.demonstrateLengthConversion(-1.0, LengthUnit.FEET, LengthUnit.INCHES).getValue());
+    }
+    
+    @Test 
+    public void testConversion_InvalidUnit_Throws() {
+    	
+    	Assertions.assertThrows(IllegalArgumentException.class, ()->{
+    		QuantityMeasurementApp.demonstrateLengthConversion(null, LengthUnit.FEET, LengthUnit.CENTIMETERS);
+    	});
+    }
+    
+    @Test
+    public void testConversion_NaNOrInfinite_Throws() {
+    	Assertions.assertThrowsExactly(IllegalArgumentException.class, ()->{
+    		QuantityMeasurementApp.demonstrateLengthConversion(Double.NaN,LengthUnit.CENTIMETERS,LengthUnit.INCHES);
+    	});
+    }
+    
+    @Test 
+    public void testConversion_PrecisionTolerance() {
+    	Assertions.assertEquals(1.0,QuantityMeasurementApp
+    			.demonstrateLengthConversion(2.54, LengthUnit.CENTIMETERS,LengthUnit.INCHES)
+    			.getValue(), 1e-6);
+    }
 }
