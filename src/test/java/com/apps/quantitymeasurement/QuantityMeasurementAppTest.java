@@ -406,4 +406,95 @@ public class QuantityMeasurementAppTest {
     	
     	Assertions.assertEquals(0.003, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2).getValue(), 0.001);
     }
+    
+    @Test
+    public void testAddition_ExplicitTargetUnit_Feet() {
+    	Length l1 = new Length(1, LengthUnit.FEET);
+    	Length l2 = new Length(12, LengthUnit.INCHES);
+    	
+    	Assertions.assertEquals(2.0, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2, LengthUnit.FEET).getValue());
+    }
+    
+    @Test
+    public void testAddition_ExplicitTargetUnit_Inches() {
+    	Length l1 = new Length(1, LengthUnit.FEET);
+    	Length l2 = new Length(12, LengthUnit.INCHES);
+    	Assertions.assertEquals(24.0, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2, LengthUnit.INCHES).getValue());
+    }
+    
+    @Test
+    public void testAddition_ExplicitTargetUnit_Yards() {
+    	Length l1 = new Length(1, LengthUnit.FEET);
+    	Length l2 = new Length(12, LengthUnit.INCHES);
+    	Assertions.assertEquals(0.667, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2, LengthUnit.YARDS).getValue(),0.001);
+    }
+    
+    @Test 
+    public void testAddition_ExplicitTargetUnit_Centimeters() {
+    	Length l1 = new Length(1, LengthUnit.INCHES);
+    	Length l2 = new Length(1, LengthUnit.INCHES);
+    	Assertions.assertEquals(5.08, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2, LengthUnit.CENTIMETERS).getValue(),0.001);
+    }
+    
+    @Test
+    public void testAddition_ExplicitTargetUnit_SameAsFirstOperand() {
+    	Length l1 = new Length(1, LengthUnit.YARDS);
+    	Length l2 = new Length(3, LengthUnit.FEET);
+    	Assertions.assertEquals(2.0, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2, LengthUnit.YARDS).getValue());
+    }
+    
+    @Test
+    public void testAddition_ExplicitTargetUnit_SameAsSecondOperand() {
+    	Length l1 = new Length(2, LengthUnit.YARDS);
+    	Length l2 = new Length(3, LengthUnit.FEET);
+    	Assertions.assertEquals(9.0, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2, LengthUnit.FEET).getValue()); 
+    }
+    
+    @Test 
+    public void testAddition_ExplicitTargetUnit_Commutativity() {
+    	Length l1 = new Length(1, LengthUnit.FEET);
+    	Length l2 = new Length(12, LengthUnit.INCHES);
+    	Assertions.assertEquals(QuantityMeasurementApp.demonstrateLengthAddition(l1, l2, LengthUnit.YARDS).getValue(), QuantityMeasurementApp.demonstrateLengthAddition(l2, l1, LengthUnit.YARDS).getValue()); 
+    }
+    
+    @Test
+    public void testAddition_ExplicitTargetUnit_WithZero() {
+    	Length l1 = new Length(5, LengthUnit.FEET);
+    	Length l2 = new Length(0, LengthUnit.INCHES);
+    	Assertions.assertEquals(1.667, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2, LengthUnit.YARDS).getValue(),0.001); 
+    }
+    
+    @Test 
+    public void testAddition_ExplicitTargetUnit_NegativeValues() {
+    	Length l1 = new Length(5, LengthUnit.FEET);
+    	Length l2 = new Length(-2, LengthUnit.FEET);
+    	
+    	Assertions.assertEquals(36.0, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2, LengthUnit.INCHES).getValue());
+    }
+    
+    @Test 
+    public void testAddition_ExplicitTargetUnit_NullTargetUnit() {
+    	Length l1 = new Length(5, LengthUnit.FEET);
+    	Length l2 = new Length(-2, LengthUnit.FEET);
+    	
+    	Assertions.assertThrows(IllegalArgumentException.class, () -> {QuantityMeasurementApp.demonstrateLengthAddition(l1, l2, null); });
+    }
+    
+    @Test
+    public void testAddition_ExplicitTargetUnit_LargeToSmallScale() {
+    	Length l1 = new Length(1000.0, LengthUnit.FEET);
+    	Length l2 = new Length(500.0, LengthUnit.FEET);
+    	Assertions.assertEquals(18000.0, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2, LengthUnit.INCHES).getValue());
+    }
+    
+    @Test 
+    public void testAddition_ExplicitTargetUnit_SmallToLargeScale() {
+    	Length l1 = new Length(12, LengthUnit.INCHES);
+    	Length l2 = new Length(12, LengthUnit.INCHES);
+    	
+    	Assertions.assertEquals(0.667, QuantityMeasurementApp.demonstrateLengthAddition(l1, l2, LengthUnit.YARDS).getValue(), 0.001);
+    }
+    
+//    @Test
+//    public void 
 }
