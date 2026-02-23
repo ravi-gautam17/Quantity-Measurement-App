@@ -77,6 +77,18 @@ public class QuantityMeasurementApp {
         System.out.println("1 Inch == 1 Foot ? : " 
                 + oneInch.equals(oneFootAgain));
     }
+    public static Length demonstrateLengthComparison(Length l1, LengthUnit unit) {
+    	return l1.convertTo(unit);
+    }
+    
+    public static Length demonstrateLengthConversion(Double value,LengthUnit unit, LengthUnit toUnit) throws IllegalArgumentException {
+    	if(value==null) {
+    		throw new IllegalArgumentException("Not Valid Input");
+    	}
+    	Length l = new Length(value,unit);
+    	l=l.convertTo(toUnit);
+    	return l;
+    }
 	public static void main(String[] args) {
 		Feet f1 = new Feet(1.0);
 		Feet f2 = new Feet(1.0);
@@ -100,5 +112,15 @@ public class QuantityMeasurementApp {
 	   Length l3 = new Length(100, LengthUnit.CENTIMETERS);
 	   Length l4 = new Length(39.3701, LengthUnit.INCHES);
 	   System.out.println("Are lengths equal? "+demonstrateLengthEquality(l3, l4));
+	   
+	   System.out.println("Convert Feet to Inches: "+demonstrateLengthComparison(new Length(1, LengthUnit.FEET),LengthUnit.INCHES));
+	   
+	   System.out.println("Convert Yards to Feet: "+ demonstrateLengthComparison(new Length(3,LengthUnit.YARDS),LengthUnit.FEET));
+	   
+	   System.out.println("Convert Inches to Yards"+ demonstrateLengthComparison(new Length(36, LengthUnit.INCHES), LengthUnit.YARDS));
+	   
+	   System.out.println("Convert Centimeters to Inches: "+ demonstrateLengthComparison(new Length(1, LengthUnit.CENTIMETERS),LengthUnit.INCHES));
+	   
+	   System.out.println("Convert to Feet to Inches: "+ demonstrateLengthComparison(new Length(0, LengthUnit.FEET), LengthUnit.INCHES));
 	}
 }
