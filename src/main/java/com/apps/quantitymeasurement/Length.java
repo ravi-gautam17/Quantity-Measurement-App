@@ -53,6 +53,12 @@ public class Length {
 		return ans;
 	}
 	
+	public Length addAndConvert(Length l, LengthUnit unit) throws IllegalArgumentException {
+		Length len = l.convertTo(this.unit);
+		Length ans = new Length(this.value+len.getValue(), this.unit);
+		return ans.convertTo(unit);
+	}
+	
 	@Override 
 	public boolean equals(Object obj) {
 		if(this==obj) return true;
