@@ -123,7 +123,8 @@ public class Quantity<U extends IMeasurable> {
 	}
 	
 	private double performArithmeticOperation(Quantity<U> other, U targetUnit, ArithmeticOperation operation) {
-		double temp = other.convertTo(this.getUnit()).getValue();
+		double temp;
+		temp = other.convertTo(this.getUnit()).getValue();
 		double result = operation.compute(this.getValue(), temp);
 		return result;
 	}
