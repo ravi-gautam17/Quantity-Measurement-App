@@ -1017,4 +1017,93 @@ public class QuantityMeasurementAppTest {
 	public void testDivision_CrossCategory() {
 		Assertions.assertThrows(IllegalArgumentException.class,()->{ QuantityMeasurementApp.demonstrateDivision(new Quantity(10, LengthUnit.FEET), new Quantity(5, WeightUnit.KILOGRAM));});
 	}
+	
+	@Test
+    public void testTemperatureEquality_CelsiusToCelsius_SameValue() {
+        Quantity<TemperatureUnit> c1 = new Quantity<>(0.0, TemperatureUnit.CELSIUS);
+        Quantity<TemperatureUnit> c2 = new Quantity<>(0.0, TemperatureUnit.CELSIUS);
+        Assertions.assertTrue(c1.equals(c2));
+    }
+
+    @Test
+    public void testTemperatureEquality_CelsiusToFahrenheit_0C_32F() {
+        Quantity<TemperatureUnit> celsius = new Quantity<>(0.0, TemperatureUnit.CELSIUS);
+        Quantity<TemperatureUnit> fahrenheit = new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
+        Assertions.assertTrue(celsius.equals(fahrenheit));
+    }
+
+    @Test
+    public void testTemperatureEquality_CelsiusToFahrenheit_100C_212F() {
+        Quantity<TemperatureUnit> celsius = new Quantity<>(100.0, TemperatureUnit.CELSIUS);
+        Quantity<TemperatureUnit> fahrenheit = new Quantity<>(212.0, TemperatureUnit.FAHRENHEIT);
+        Assertions.assertTrue(celsius.equals(fahrenheit));
+    }
+
+    @Test
+    public void testTemperatureEquality_Negative40_Intersection() {
+     
+        Quantity<TemperatureUnit> c = new Quantity<>(-40.0, TemperatureUnit.CELSIUS);
+        Quantity<TemperatureUnit> f = new Quantity<>(-40.0, TemperatureUnit.FAHRENHEIT);
+        Assertions.assertTrue(c.equals(f));
+    }
+
+    @Test
+    public void testTemperatureConversion_CelsiusToFahrenheit() {
+        Quantity<TemperatureUnit> celsius = new Quantity<>(50.0, TemperatureUnit.CELSIUS);
+        double result = celsius.convertTo(TemperatureUnit.FAHRENHEIT).getValue();
+        Assertions.assertEquals(122.0, result, 0.001);
+    }
+
+    @Test
+    public void testTemperatureConversion_FahrenheitToCelsius() {
+        Quantity<TemperatureUnit> fahrenheit = new Quantity<>(212.0, TemperatureUnit.FAHRENHEIT);
+        double result = fahrenheit.convertTo(TemperatureUnit.CELSIUS).getValue();
+        Assertions.assertEquals(100.0, result, 0.001);
+    }
+
+    @Test
+    public void testTemperatureAddition_ShouldThrowException() {
+        Quantity<TemperatureUnit> c1 = new Quantity<>(10.0, TemperatureUnit.CELSIUS);
+        Quantity<TemperatureUnit> c2 = new Quantity<>(20.0, TemperatureUnit.CELSIUS);
+        
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+            c1.add(c2);
+        });
+    }
+
+    @Test
+    public void testTemperatureSubtraction_ShouldThrowException() {
+        Quantity<TemperatureUnit> c1 = new Quantity<>(100.0, TemperatureUnit.CELSIUS);
+        Quantity<TemperatureUnit> c2 = new Quantity<>(50.0, TemperatureUnit.CELSIUS);
+        
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+            c1.subtract(c2);
+        });
+    }
+
+    @Test
+    public void testTemperatureDivision_ShouldThrowException() {
+        Quantity<TemperatureUnit> c1 = new Quantity<>(100.0, TemperatureUnit.CELSIUS);
+        Quantity<TemperatureUnit> c2 = new Quantity<>(2.0, TemperatureUnit.CELSIUS);
+        
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+            c1.divide(c2);
+        });
+    }
+
+    @Test
+    public void testLegacyArithmetic_LengthAddition_StillWorks() {
+        Quantity<LengthUnit> l1 = new Quantity<>(1, LengthUnit.FEET);
+        Quantity<LengthUnit> l2 = new Quantity<>(1, LengthUnit.FEET);
+        
+        Assertions.assertEquals(2.0, l1.add(l2).getValue());
+    }
+
+    @Test
+    public void testCrossCategoryEquality_TemperatureVsLength() {
+        Quantity<TemperatureUnit> temp = new Quantity<>(100.0, TemperatureUnit.CELSIUS);
+        Quantity<LengthUnit> length = new Quantity<>(100.0, LengthUnit.FEET);
+     
+        Assertions.assertFalse(temp.equals(length));
+    }
 }
