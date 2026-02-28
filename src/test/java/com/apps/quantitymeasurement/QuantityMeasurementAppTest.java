@@ -27,7 +27,6 @@ public class QuantityMeasurementAppTest {
     
     @Test
     public void testFeetIncheComparision() {
-    	double temp=0;
     	Quantity len1 = new Quantity(2,LengthUnit.FEET);
     	Quantity len2 = new Quantity(24,LengthUnit.INCHES);
     	Assertions.assertTrue(len1.equals(len2));
