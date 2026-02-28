@@ -47,6 +47,46 @@ public class Quantity<U extends IMeasurable> {
 		
 		return add.convertTo(unit);
 	}
+	public Quantity<U> subtract(Quantity<U> quantity)throws IllegalArgumentException{
+		if(!this.getUnit().getClass().equals(quantity.getUnit().getClass())) {
+			throw new IllegalArgumentException("different measurement unit");
+		}
+		double q = quantity.convertToBaseUnit();
+		double diff = this.convertToBaseUnit()-q;
+		Quantity<U> ans = new Quantity(this.unit.convertFromBaseUnit(diff), this.getUnit());
+		return ans;
+	}
+	public Quantity<U> subtract(Quantity<U> quantity, U targetUnit) throws IllegalArgumentException{
+		if(!this.getUnit().getClass().equals(quantity.getUnit().getClass())) {
+			throw new IllegalArgumentException("different measurement unit");
+		}
+		double q = quantity.convertToBaseUnit();
+		double diff = this.convertToBaseUnit()-q;
+		Quantity<U> ans = new Quantity(targetUnit.convertFromBaseUnit(diff), targetUnit);
+		return ans;
+	}
+	public double divide(Quantity<U> quantity) throws ArithmeticException, IllegalArgumentException{
+		if(!this.getUnit().getClass().equals(quantity.getUnit().getClass())) {
+			throw new IllegalArgumentException("different measurement unit");
+		}
+		if(quantity.getValue()==0) {
+			throw new ArithmeticException("cannot divide by zero");
+		}
+		double div = this.convertToBaseUnit()/quantity.convertToBaseUnit();
+		
+		return div;
+	}
+	public double divide(Quantity<U> quantity, U targetUnit) throws ArithmeticException, IllegalArgumentException{
+		if(!this.getUnit().getClass().equals(quantity.getUnit().getClass())) {
+			throw new IllegalArgumentException("different measurement unit");
+		}
+		if(quantity.getValue()==0) {
+			throw new ArithmeticException("cannot divide by zero");
+		}
+		double div = this.convertToBaseUnit()/quantity.convertToBaseUnit();
+		
+		return div;
+	}
 	public double convertToBaseUnit() {
 		return value*unit.getConversionFactor();
 	}
