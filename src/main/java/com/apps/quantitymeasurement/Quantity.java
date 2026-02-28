@@ -28,24 +28,30 @@ public class Quantity<U extends IMeasurable> {
 		if(obj==null || this.getClass()!=obj.getClass()) return false;
 		
 		Quantity quan = (Quantity) obj;
+		if(this.getUnit().getClass()!=quan.getUnit().getClass()) return false;
 		
 		return Math.abs(this.value-quan.convertTo(this.unit).getValue())<EPSILON;
 	}
 	
 	public Quantity<U> convertTo(U targetUnit) {
-		double value = this.value*this.unit.getConversionFactor()/targetUnit.getConversionFactor();
-		return new Quantity(value, targetUnit);
-	}
+        if (this.unit instanceof TemperatureUnit) {
+            double base = this.unit.convertToBaseUnit(this.value);
+            double result = ((TemperatureUnit) targetUnit).convertFromBaseUnit(base);
+            return new Quantity<>(result, targetUnit);
+        }
+        double value = this.value * this.unit.getConversionFactor() / targetUnit.getConversionFactor();
+        return new Quantity<>(value, targetUnit);
+    }
 	public Quantity<U>  add(Quantity<U> quan){
 		quan = quan.convertTo(this.unit);
-		Quantity add = new Quantity(this.performArithmeticOperation(quan, unit, ArithmeticOperation.ADD), this.getUnit());
+		Quantity add = new Quantity(this.performArithmeticOperation(quan, ArithmeticOperation.ADD), this.getUnit());
 		return add;
 	}
 	
 	public Quantity<U> add(Quantity<U> quan, U unit){
 		quan = quan.convertTo(unit);
 		Quantity<U> quan2 = this.convertTo(unit);
-		Quantity add = new Quantity<>(quan2.performArithmeticOperation(quan,unit,ArithmeticOperation.ADD), unit);
+		Quantity add = new Quantity<>(quan2.performArithmeticOperation(quan, ArithmeticOperation.ADD), unit);
 		
 		return add;
 	}
@@ -54,7 +60,7 @@ public class Quantity<U extends IMeasurable> {
 			throw new IllegalArgumentException("different measurement unit");
 		}
 		Quantity<U> q = quantity.convertTo(this.unit);
-		Quantity<U> ans = new Quantity(this.performArithmeticOperation(q, this.unit, ArithmeticOperation.SUBTRACT), this.getUnit());
+		Quantity<U> ans = new Quantity(this.performArithmeticOperation(q, ArithmeticOperation.SUBTRACT), this.getUnit());
 		return ans;
 	}
 	public Quantity<U> subtract(Quantity<U> quantity, U targetUnit) throws IllegalArgumentException{
@@ -63,7 +69,7 @@ public class Quantity<U extends IMeasurable> {
 		}
 		Quantity<U> quan =quantity.convertTo(targetUnit);
 		Quantity<U> quan2 = this.convertTo(targetUnit);
-		Quantity<U> ans = new Quantity(quan2.performArithmeticOperation(quan,targetUnit, ArithmeticOperation.SUBTRACT), targetUnit);
+		Quantity<U> ans = new Quantity(quan2.performArithmeticOperation(quan, ArithmeticOperation.SUBTRACT), targetUnit);
 		return ans;
 	}
 	public double divide(Quantity<U> quantity) throws ArithmeticException, IllegalArgumentException{
@@ -73,7 +79,7 @@ public class Quantity<U extends IMeasurable> {
 		if(quantity.getValue()==0) {
 			throw new ArithmeticException("cannot divide by zero");
 		}
-		double div = this.performArithmeticOperation(quantity, unit, ArithmeticOperation.DIVIDE);
+		double div = this.performArithmeticOperation(quantity, ArithmeticOperation.DIVIDE);
 		return div;
 	}
 	public double divide(Quantity<U> quantity, U targetUnit) throws ArithmeticException, IllegalArgumentException{
@@ -83,7 +89,7 @@ public class Quantity<U extends IMeasurable> {
 		if(quantity.getValue()==0) {
 			throw new ArithmeticException("cannot divide by zero");
 		}
-		double div = this.performArithmeticOperation(quantity, targetUnit, ArithmeticOperation.DIVIDE);		
+		double div = this.performArithmeticOperation(quantity, ArithmeticOperation.DIVIDE);		
 		return div;
 	}
 	public double convertToBaseUnit() {
@@ -122,12 +128,13 @@ public class Quantity<U extends IMeasurable> {
 		
 	}
 	
-	private double performArithmeticOperation(Quantity<U> other, U targetUnit, ArithmeticOperation operation) {
-		double temp;
-		temp = other.convertTo(this.getUnit()).getValue();
-		double result = operation.compute(this.getValue(), temp);
-		return result;
-	}
+	private double performArithmeticOperation(Quantity<U> other, ArithmeticOperation operation) {
+        // UC14: Validate support before doing math
+        this.unit.validateOperationSupport(operation.name());
+        
+        double temp = other.convertTo(this.unit).getValue();
+        return operation.compute(this.value, temp);
+    }
 	public static void main(String[] args) {
 		Quantity<LengthUnit> lengthInFeet = new Quantity(10.0, LengthUnit.FEET);
 		Quantity<LengthUnit> lengthInInches = new Quantity(120.0, LengthUnit.INCHES);
@@ -152,7 +159,7 @@ public class Quantity<U extends IMeasurable> {
 		Quantity<LengthUnit> len1 = new Quantity(1, LengthUnit.FEET);
 		Quantity<LengthUnit> len2 = new Quantity(12, LengthUnit.INCHES);
 		
-		System.out.println(len1.performArithmeticOperation(len2, LengthUnit.FEET, ArithmeticOperation.ADD));
+		System.out.println(len1.performArithmeticOperation(len2, ArithmeticOperation.ADD));
 		
   	}
 }
