@@ -1,9 +1,15 @@
 package com.apps.quantitymeasurement;
 
-import com.apps.quantitymeasurement.Quantity;
-import com.apps.quantitymeasurement.LengthUnit;
-import com.apps.quantitymeasurement.WeightUnit;
-import com.apps.quantitymeasurement.IMeasurable;
+import com.apps.quantitymeasurement.controller.QuantityMeasurementController;
+import com.apps.quantitymeasurement.entity.QuantityDTO;
+import com.apps.quantitymeasurement.quantity.Quantity;
+import com.apps.quantitymeasurement.repository.IQuantityMeasurementRepository;
+import com.apps.quantitymeasurement.repository.QuantityMeasurementCacheRepository;
+import com.apps.quantitymeasurement.services.*;
+import com.apps.quantitymeasurement.unit.IMeasurable;
+import com.apps.quantitymeasurement.unit.LengthUnit;
+import com.apps.quantitymeasurement.unit.VolumeUnit;
+import com.apps.quantitymeasurement.unit.WeightUnit;
 
 
 public class QuantityMeasurementApp {
@@ -145,6 +151,42 @@ public class QuantityMeasurementApp {
 		
 		System.out.println("MilliLitre and Litre division: "+QuantityMeasurementApp.demonstrateDivision(new Quantity(1000, VolumeUnit.MILLILETRE), new Quantity(1, VolumeUnit.LITRE)));
 		
-		
+		IQuantityMeasurementRepository repository = QuantityMeasurementCacheRepository.getInstance();
+		IQuantityMeasurementService service = new QuantityMeasurementServiceImpl(repository);
+        QuantityMeasurementController controller = new QuantityMeasurementController(service);
+
+        System.out.println("=== Quantity Measurement Application Initialized ===");
+
+        try {
+            // Demonstration: Length Addition (Feet + Inches)
+            System.out.println("\n[Action] Adding 1 Feet and 12 Inches...");
+            QuantityDTO feet = new QuantityDTO(1.0, "FEET", "LengthUnit");
+            QuantityDTO inches = new QuantityDTO(12.0, "INCHES", "LengthUnit");
+            
+            QuantityDTO sumResult = controller.performAddition(feet, inches);
+            System.out.println("Result: " + sumResult.getValue() + " " + sumResult.getUnit());
+
+            // Demonstration: Volume Comparison (Gallon vs Litre)
+            System.out.println("\n[Action] Comparing 1 Gallon and 3.78541 Litres...");
+            QuantityDTO gallon = new QuantityDTO(1.0, "GALLON", "VolumeUnit");
+            QuantityDTO litre = new QuantityDTO(3.78541, "LITRE", "VolumeUnit");
+            
+            boolean isEqual1 = controller.performComparison(gallon, litre);
+            System.out.println("Result: Are they equal? " + isEqual1);
+
+            // Demonstration: Weight Conversion (KG to Grams)
+            System.out.println("\n[Action] Converting 1 Kilogram to Grams...");
+            QuantityDTO kg = new QuantityDTO(1.0, "KILOGRAM", "WeightUnit");
+            QuantityDTO gramTarget = new QuantityDTO(0, "GRAM", "WeightUnit");
+            
+            QuantityDTO converted = controller.performConversion(kg, gramTarget);
+            System.out.println("Result: " + converted.getValue() + " " + converted.getUnit());
+
+        } catch (Exception e) {
+            System.err.println("An error occurred during operation: " + e.getMessage());
+        }
+
+        System.out.println("\n=== Application Session Summary ===");
+        System.out.println("Total Transactions in Storage: " + repository.getAllMeasurements().size());
 	}
 }
