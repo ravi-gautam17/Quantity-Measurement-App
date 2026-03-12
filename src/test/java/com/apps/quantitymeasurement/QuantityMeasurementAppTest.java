@@ -1,17 +1,186 @@
-
 package com.apps.quantitymeasurement;
 
-import com.apps.quantitymeasurement.QuantityMeasurementApp.*;
-import com.apps.quantitymeasurement.Quantity;
-import com.apps.quantitymeasurement.LengthUnit;
-
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class QuantityMeasurementAppTest {
+import com.apps.quantitymeasurement.controller.QuantityMeasurementController;
+import com.apps.quantitymeasurement.quantity.Quantity;
+import com.apps.quantitymeasurement.repository.QuantityMeasurementCacheRepository;
+import com.apps.quantitymeasurement.services.QuantityMeasurementServiceImpl;
+import com.apps.quantitymeasurement.unit.LengthUnit;
+import com.apps.quantitymeasurement.unit.TemperatureUnit;
+import com.apps.quantitymeasurement.unit.VolumeUnit;
+import com.apps.quantitymeasurement.unit.WeightUnit;
+import com.apps.quantitymeasurement.entity.QuantityDTO;
+import com.apps.quantitymeasurement.entity.QuantityMeasurementEntity;
 
+
+public class QuantityMeasurementAppTest {
+	
+	private QuantityMeasurementServiceImpl service;
+	private QuantityMeasurementController controller;
+	private QuantityMeasurementCacheRepository repository;
+	
+	@BeforeEach
+	void setup() {
+		repository = new QuantityMeasurementCacheRepository().getInstance();
+		service = new QuantityMeasurementServiceImpl(repository);
+		controller = new QuantityMeasurementController(service);
+	}
+	
+	// ==============================
+    // ENTITY LAYER TESTS
+    // ==============================
+
+
+    // ==============================
+    // SERVICE LAYER TESTS
+    // ==============================
+
+    @Test
+    void testService_CompareEquality_SameUnit_Success() {
+
+        QuantityDTO q1 = new QuantityDTO(10, "FEET", "LENGTHUNIT");
+        QuantityDTO q2 = new QuantityDTO(10, "FEET", "LENGTHUNIT");
+
+        Assertions.assertTrue(service.compare(q1, q2));
+    }
+
+    @Test
+    void testService_CompareEquality_DifferentUnit_Success() {
+
+        QuantityDTO q1 = new QuantityDTO(1, "FEET", "LENGTHUNIT");
+        QuantityDTO q2 = new QuantityDTO(12, "INCHES", "LENGTHUNIT");
+
+        Assertions.assertTrue(service.compare(q1, q2));
+    }
+
+    @Test
+    void testService_Convert_Success() {
+
+        QuantityDTO q1 = new QuantityDTO(1, "FEET", "LENGTHUNIT");
+        QuantityDTO target = new QuantityDTO(0, "INCHES", "LENGTHUNIT");
+
+        QuantityDTO result = service.convert(q1, target);
+
+        Assertions.assertEquals(12, result.getValue());
+    }
+
+    @Test
+    void testService_Add_Success() {
+
+        QuantityDTO q1 = new QuantityDTO(1, "FEET", "LENGTHUNIT");
+        QuantityDTO q2 = new QuantityDTO(12, "INCHES", "LENGTHUNIT");
+
+        QuantityDTO result = service.add(q1, q2);
+
+        Assertions.assertEquals(2, result.getValue());
+    }
+
+    @Test
+    void testService_Subtract_Success() {
+
+        QuantityDTO q1 = new QuantityDTO(10, "FEET", "LENGTHUNIT");
+        QuantityDTO q2 = new QuantityDTO(5, "FEET", "LENGTHUNIT");
+
+        QuantityDTO result = service.subtract(q1, q2);
+
+        Assertions.assertEquals(5, result.getValue());
+    }
+
+    @Test
+    void testService_Divide_Success() {
+
+        QuantityDTO q1 = new QuantityDTO(10, "FEET", "LENGTHUNIT");
+        QuantityDTO q2 = new QuantityDTO(2, "FEET", "LENGTHUNIT");
+
+        Assertions.assertEquals(5, service.divide(q1, q2));
+    }
+
+    @Test
+    void testService_Divide_ByZero_Error() {
+
+        QuantityDTO q1 = new QuantityDTO(10, "FEET", "LENGTHUNIT");
+        QuantityDTO q2 = new QuantityDTO(0, "FEET", "LENGTHUNIT");
+
+        Assertions.assertThrows(ArithmeticException.class,
+                () -> service.divide(q1, q2));
+    }
+
+    // ==============================
+    // CONTROLLER TESTS
+    // ==============================
+
+    @Test
+    void testController_DemonstrateEquality_Success() {
+
+        QuantityDTO q1 = new QuantityDTO(1, "FEET", "LENGTHUNIT");
+        QuantityDTO q2 = new QuantityDTO(12, "INCHES", "LENGTHUNIT");
+
+        Assertions.assertTrue(controller.performComparison(q1, q2));
+    }
+
+    @Test
+    void testController_DemonstrateAddition_Success() {
+
+        QuantityDTO q1 = new QuantityDTO(1, "FEET", "LENGTHUNIT");
+        QuantityDTO q2 = new QuantityDTO(12, "INCHES", "LENGTHUNIT");
+
+        QuantityDTO result = controller.performAddition(q1, q2);
+
+        Assertions.assertEquals(2, result.getValue());
+    }
+
+    // ==============================
+    // LAYER COMMUNICATION TESTS
+    // ==============================
+
+    @Test
+    void testDataFlow_ControllerToService() {
+
+        QuantityDTO q1 = new QuantityDTO(1, "FEET", "LENGTHUNIT");
+        QuantityDTO q2 = new QuantityDTO(12, "INCHES", "LENGTHUNIT");
+
+        boolean result = controller.performComparison(q1, q2);
+
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    void testDataFlow_ServiceToRepository() {
+
+        QuantityDTO q1 = new QuantityDTO(1, "FEET", "LENGTHUNIT");
+        QuantityDTO q2 = new QuantityDTO(12, "INCHES", "LENGTHUNIT");
+
+        service.compare(q1, q2);
+
+        Assertions.assertFalse(repository.getAllMeasurements().isEmpty());
+    }
+
+    // ==============================
+    // ERROR PROPAGATION
+    // ==============================
+
+    @Test
+    void testService_NullEntity_Rejection() {
+
+        Assertions.assertThrows(NullPointerException.class,
+                () -> service.compare(null, null));
+    }
+    @Test
+    void testService_ArithmeticErrorPersistence() {
+        QuantityDTO q1 = new QuantityDTO(10, "CELSIUS", "TEMPERATUREUNIT");
+        QuantityDTO q2 = new QuantityDTO(20, "CELSIUS", "TEMPERATUREUNIT");
+
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> service.add(q1, q2));
+
+        QuantityMeasurementEntity errorLog = repository.getAllMeasurements().get(repository.getAllMeasurements().size() - 1);
+        Assertions.assertTrue(errorLog.isError);
+        Assertions.assertNotNull(errorLog.errorMessage);
+    }
     @Test
     public void testFeetEquality() {
     	Quantity len1 = new Quantity(2,LengthUnit.FEET);
