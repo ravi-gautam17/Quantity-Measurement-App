@@ -12,6 +12,7 @@ target/
 
 # Logs
 *.log
+*.ser
 
 # OS-specific files
 .DS_Store
