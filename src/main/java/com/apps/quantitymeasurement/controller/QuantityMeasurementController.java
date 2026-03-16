@@ -3,8 +3,7 @@ package com.apps.quantitymeasurement.controller;
 import com.apps.quantitymeasurement.entity.QuantityDTO;
 import com.apps.quantitymeasurement.repository.IQuantityMeasurementRepository;
 import com.apps.quantitymeasurement.repository.QuantityMeasurementCacheRepository;
-import com.apps.quantitymeasurement.services.IQuantityMeasurementService;
-import com.apps.quantitymeasurement.services.QuantityMeasurementServiceImpl;
+import com.apps.quantitymeasurement.services.*;
 
 public class QuantityMeasurementController {
 	private IQuantityMeasurementService quantityMeasurementService;

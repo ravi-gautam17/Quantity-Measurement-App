@@ -1,4 +1,3 @@
-
 package com.apps.quantitymeasurement.entity;
 
 import java.util.Objects;
@@ -46,6 +45,33 @@ public class QuantityMeasurementEntity implements java.io.Serializable {
 			this.thatUnit = thatQuantity.getUnit().toString();
 			this.operation = operation;
 		}
+		
+		
+		
+		public QuantityMeasurementEntity(double thisValue, String thisUnit, String thisMeasurementType,
+				double thatValue, String thatUnit, String thatMeasurementType, String operation, double resultValue,
+				String resultUnit, String resultMeasurementType, String resultString, boolean isError,
+				String errorMessage) {
+			super();
+			this.thisValue = thisValue;
+			this.thisUnit = thisUnit;
+			this.thisMeasurementType = thisMeasurementType;
+			this.thatValue = thatValue;
+			this.thatUnit = thatUnit;
+			this.thatMeasurementType = thatMeasurementType;
+			this.operation = operation;
+			this.resultValue = resultValue;
+			this.resultUnit = resultUnit;
+			this.resultMeasurementType = resultMeasurementType;
+			this.resultString = resultString;
+			this.isError = isError;
+			this.errorMessage = errorMessage;
+		}
+
+		public QuantityMeasurementEntity() {
+			// TODO Auto-generated constructor stub
+		}
+
 		@Override
 	    public boolean equals(Object obj) {
 
