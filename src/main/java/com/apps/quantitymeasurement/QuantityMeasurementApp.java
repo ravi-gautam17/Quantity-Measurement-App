@@ -13,6 +13,7 @@ public class QuantityMeasurementApp {
 	
 	public static <U extends IMeasurable> boolean demonstrateEquality(Quantity<U> quantity1, Quantity<U> quantity2) throws IllegalArgumentException {
 		if(quantity1==null || quantity2==null) return false;
+		int x=0;
 		if(quantity1.getUnit().getClass()!=quantity2.getUnit().getClass()) return false;
 		return quantity1.equals(quantity2);
 	}
