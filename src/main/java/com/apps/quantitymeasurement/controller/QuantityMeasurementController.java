@@ -1,42 +1,192 @@
 package com.apps.quantitymeasurement.controller;
 
-import com.apps.quantitymeasurement.entity.QuantityDTO;
-import com.apps.quantitymeasurement.repository.IQuantityMeasurementRepository;
-import com.apps.quantitymeasurement.repository.QuantityMeasurementCacheRepository;
-import com.apps.quantitymeasurement.services.*;
+import com.apps.quantitymeasurement.model.QuantityDTO;
+import com.apps.quantitymeasurement.model.OperationType;
+import com.apps.quantitymeasurement.model.QuantityMeasurementDTO;
+import com.apps.quantitymeasurement.model.QuantityInputDTO;
+import com.apps.quantitymeasurement.service.IQuantityMeasurementService;
+import com.apps.quantitymeasurement.service.QuantityMeasurementServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import org.springframework.web.bind.annotation.RequestBody;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 
+import java.util.List;
+
+import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+
+@RestController
+@RequestMapping("/api/v1/quantities")
+@Tag(name="Quantity Measurement", description = "REST API for quantity measurement operations")
 public class QuantityMeasurementController {
-	private IQuantityMeasurementService quantityMeasurementService;
+
+    private static final Logger logger = Logger.getLogger(QuantityMeasurementController.class.getName());
 	
-	public QuantityMeasurementController(
-			IQuantityMeasurementService quantityMeasurementService) {
-		this.quantityMeasurementService = quantityMeasurementService;
-	}
+    private final IQuantityMeasurementService service;
+
+    public QuantityMeasurementController(IQuantityMeasurementService service) {
+        this.service = service;
+    }
 	
-	public boolean performComparison(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO) {
-		return quantityMeasurementService.compare(thisQuantityDTO, thatQuantityDTO);
-	}
-	
-	public QuantityDTO performConversion(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO) {
-		return quantityMeasurementService.convert(thisQuantityDTO, thatQuantityDTO);
-	}
-	
-	public QuantityDTO performAddition(QuantityDTO thisQuantity, QuantityDTO thatQuantity) {
-		return quantityMeasurementService.add(thisQuantity, thatQuantity);
-	}
-	
-	public QuantityDTO performAddition(QuantityDTO thisQuantity, QuantityDTO thatQuantity, 
-			QuantityDTO targetQuantity) {
-		return quantityMeasurementService.add(thisQuantity, thatQuantity, targetQuantity);
-	}
-	public QuantityDTO performSubtraction(QuantityDTO thisQuantity, QuantityDTO thatQuantity) {
-		return quantityMeasurementService.subtract(thisQuantity, thatQuantity);
-	}
-	public QuantityDTO performSubtraction(QuantityDTO thisQuantity, QuantityDTO thatQuantity, QuantityDTO targetQuantity) {
-		return quantityMeasurementService.subtract(thisQuantity, thatQuantity, targetQuantity);
-	}
-	
-	public double performDivision(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO) {
-		return quantityMeasurementService.divide(thisQuantityDTO, thatQuantityDTO);
-	}
+	private static final String EX_FEET_INCH= """
+			{ "thisQuantityDTO": {"value":1.0, "unit":"FEET", "measurementType":"LengthUnit"},
+			"thatQuantityDTO": {"value":12.0, "unit":"INCHES", "measurementType":"LengthUnit"} }""";
+
+		private static final String EX_YARD_FEET = """
+		{ "thisQuantityDTO": {"value":1.0,"unit":"YARDS", "measurementType":"LengthUnit"},
+		"thatQuantityDTO": {"value":3.0,"unit":"FEET", "measurementType":"LengthUnit"} }""";
+
+		private static final String EX_GALLON_LITRE = """
+		{ "thisQuantityDTO": {"value":1.0,"unit":"GALLON", "measurementType":"VolumeUnit"},
+		"thatQuantityDTO": {"value": 3.785,"unit":"LITRE", "measurementType":"VolumeUnit" } }""";
+
+		private static final String EX_TEMP = """
+		{ "thisQuantityDTO": {"value": 212.0,"unit":"FAHRENHEIT", "measurementType":"TemperatureUnit"},
+		"thatQuantityDTO": {"value":100.0,"unit":"CELSIUS", "measurementType":"TemperatureUnit"} }""";
+
+		private static final String EX_WITH_TARGET = """
+		{ "thisQuantityDTO": {"value":1.0, "unit":"FEET", "measurementType":"LengthUnit"},
+		"thatQuantityDTO": {"value": 12.0,"unit":"INCHES", "measurementType":"LengthUnit"},
+		"targetQuantityDTO": {"value":0.0, "unit":"INCHES", "measurementType":"LengthUnit"} }""";
+        		
+		@PostMapping("/compare")
+		@Operation(summary="Compare two quantities",
+			requestBody= @io.swagger.v3.oas.annotations.parameters.RequestBody(
+				content = @Content(examples = {
+						@ExampleObject(name="Feet = 12 Inches", value= EX_FEET_INCH),
+						@ExampleObject(name="Yard = 3 Feet", value= EX_YARD_FEET),
+						@ExampleObject(name="Gallona = Litre", value= EX_GALLON_LITRE),
+						@ExampleObject(name="212°F = 100°C ", value = EX_TEMP)
+				})
+			)
+		)
+		public ResponseEntity<QuantityMeasurementDTO> performComparison(@Valid @RequestBody QuantityInputDTO quantityInputDTO){
+			return ResponseEntity.ok(service.compare(quantityInputDTO.getThisQuantityDTO(), quantityInputDTO.getThatQuantityDTO()));
+		}
+		
+		@PostMapping("/convert")
+		@Operation(summary="Compare two quantities",
+			requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+				content= @Content(examples = {
+						@ExampleObject(name="Feet -> Inches", value= EX_FEET_INCH),
+						@ExampleObject(name="Yard -> Feet", value = EX_YARD_FEET),
+						@ExampleObject(name="Gallon -> Litres", value = EX_GALLON_LITRE),
+						@ExampleObject(name="212°F -> 100°C", value = EX_TEMP)
+				})
+			)
+		)
+		public ResponseEntity<QuantityMeasurementDTO> performConversion(@Valid @RequestBody QuantityInputDTO quantityInputDTO){
+			return ResponseEntity.ok(service.convert(quantityInputDTO.getThisQuantityDTO(), quantityInputDTO.getThatQuantityDTO()));
+		}
+		
+		@PostMapping("/add")
+		@Operation(summary = "Add two quantities",
+			requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+				content = @Content(examples = {
+						@ExampleObject(name = "Feet + Inches", value= EX_FEET_INCH),
+						@ExampleObject(name = "Yard + Feet", value= EX_YARD_FEET),
+						@ExampleObject(name = "Gallon + Litres", value = EX_GALLON_LITRE)
+				})
+			)
+		)
+		public ResponseEntity<QuantityMeasurementDTO> performAddition(@Valid @RequestBody QuantityInputDTO quantityInputDTO){
+			return ResponseEntity.ok(service.add(quantityInputDTO.getThisQuantityDTO(), quantityInputDTO.getThatQuantityDTO()));
+		}
+		
+		@PostMapping("/add-with-target-unit")
+		@Operation(summary = "Add two quantities with a target unit",
+			requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+					content = @Content(examples = {
+							@ExampleObject(name = "Feet + Inches with Target Unit", value = EX_WITH_TARGET)
+					})
+				)
+		)
+		public ResponseEntity<QuantityMeasurementDTO> performAdditionWithTargetUnit(@Valid @RequestBody QuantityInputDTO quantityInputDTO){
+			return ResponseEntity.ok(service.add(quantityInputDTO.getThisQuantityDTO(), quantityInputDTO.getThatQuantityDTO(), quantityInputDTO.getTargetQuantityDTO()));
+		}
+		
+		@PostMapping("/subtract")
+		@Operation(summary = "Subtract two quantities",
+			requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+				content = @Content(examples = {
+						@ExampleObject(name = "Feet - Inches", value = EX_FEET_INCH),
+						@ExampleObject(name = "Yard - Feet", value = EX_YARD_FEET),
+						@ExampleObject(name = "Gallon - Litres", value = EX_GALLON_LITRE)
+				})
+			)
+		)
+		public ResponseEntity<QuantityMeasurementDTO> performSubtraction(@Valid @RequestBody QuantityInputDTO quantityInputDTO){
+			return ResponseEntity.ok(service.subtract(quantityInputDTO.getThisQuantityDTO(), quantityInputDTO.getThatQuantityDTO()));
+		}
+		
+		@PostMapping("/subtract-with-target-unit")
+		@Operation (summary = "Subtract two quantities with target unit",
+			requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+				content = @Content(examples = {
+					@ExampleObject(name = "Feet - Inches with Target Unit", value = EX_WITH_TARGET)
+				})
+			)
+		)
+		public ResponseEntity<QuantityMeasurementDTO> performSubtractionWithTargetUnit(@Valid @RequestBody QuantityInputDTO quantityInputDTO) {
+			return ResponseEntity.ok(service.subtract(quantityInputDTO.getThisQuantityDTO(), quantityInputDTO.getThatQuantityDTO(), quantityInputDTO.getTargetQuantityDTO()));
+		}
+		
+		@PostMapping("/divide")
+		@Operation(summary = "Divide two quantities",
+			requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+					content = @Content(examples = {
+							@ExampleObject(name="Feet / Inches", value=EX_FEET_INCH),
+							@ExampleObject(name="Yard / Feet", value=EX_YARD_FEET),
+							@ExampleObject(name="Gallon / Litres", value=EX_GALLON_LITRE)
+					})
+				)
+		)
+		public ResponseEntity<QuantityMeasurementDTO> performDivision(@Valid @RequestBody QuantityInputDTO quantityInputDTO){
+			return ResponseEntity.ok(service.divide(quantityInputDTO.getThisQuantityDTO(), quantityInputDTO.getThatQuantityDTO()));
+		}
+		
+		@GetMapping("/history/operation/{operation}")
+		@Operation(
+				summary = "Get operation history",
+				description = "Valid operations: ADD, SUBTRACT, MULTIPLY, DIVIDE, CONVERT"
+		)
+		public ResponseEntity<List<QuantityMeasurementDTO>> getOperationHistory(@PathVariable String operation){
+			return ResponseEntity.ok(service.getOperationHistory(operation));
+		}
+		
+		@GetMapping("/history/type/{type}")
+		@Operation(
+			summary = "Get operation history by type",
+			description = "Valid types: LengthUnit, VolumeUnit, WeightUnit, TemperatureUnit"
+		)
+		public ResponseEntity<List<QuantityMeasurementDTO>> getOperationHistoryByType(@PathVariable String type){
+			return ResponseEntity.ok(service.getMeasurementsByType(type));
+			
+		}
+		
+		@GetMapping("/count/{operation}")
+		@Operation(
+			summary = "Get operation count", 
+			description = "Valid operations: ADD, SUBTRACT, MULTIPLY, DIVIDE, CONVERT"
+		)
+		public ResponseEntity<Long> getOperationCount(@PathVariable String operation){
+			return ResponseEntity.ok(service.getOperationCount(operation));
+		}
+		
+		@GetMapping("/history/errored")
+		@Operation (summary = "Get errored operations history")
+		public ResponseEntity<List<QuantityMeasurementDTO>> getErroredOperations(){
+			return ResponseEntity.ok(service.getErrorHistory());
+		}
 }
