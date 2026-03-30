@@ -11,10 +11,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
 import com.app.quantitymeasurementapp.controller.QuantityMeasurementController;
-import com.app.quantitymeasurementapp.model.QuantityDTO;
-import com.app.quantitymeasurementapp.model.QuantityInputDTO;
-import com.app.quantitymeasurementapp.entity.QuantityMeasurementDTO;
-import com.app.quantitymeasurementapp.entity.QuantityModel;
+import com.app.quantitymeasurementapp.dto.QuantityDTO;
+import com.app.quantitymeasurementapp.dto.QuantityInputDTO;
+import com.app.quantitymeasurementapp.dto.QuantityMeasurementDTO;
+import com.app.quantitymeasurementapp.dto.QuantityModel;
 import com.app.quantitymeasurementapp.exception.CategoryMismatchException;
 import com.app.quantitymeasurementapp.exception.QuantityMeasurementException;
 import com.app.quantitymeasurementapp.unit.IMeasurable;

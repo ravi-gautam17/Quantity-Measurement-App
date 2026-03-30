@@ -78,6 +78,17 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errro);
 	}
 	
+	@ExceptionHandler(UnauthorizedException.class)
+	public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException e, HttpServletRequest request){
+		ErrorResponse errro = new ErrorResponse();
+		errro.setDateTime(LocalDateTime.now());
+		errro.setStatus(HttpStatus.UNAUTHORIZED.value());
+		errro.setError("Unauthorized access!");
+		errro.setMessage(e.getMessage());
+		errro.setPath(request.getRequestURL().toString());
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errro);
+	}
+	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handle(Exception e, HttpServletRequest request){
 		ErrorResponse errro = new ErrorResponse();

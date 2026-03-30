@@ -17,68 +17,54 @@ This project was implemented incrementally using:
 
 ---
 
-# 🌱 UC17 – Spring Boot Backend
-📅 **12 Mar 2026**  
-🔖 **Branch:** `feature/UC17-SpringBackend`
+# 🔐 UC18 – Google Authentication & User Management
+📅 **20 Mar 2026**  
+🔖 **Branch:** `feature/UC18-GoogleAuthUserManagement`
 
 ## 🎯 Objective
-Develop a **Spring Boot backend API** for quantity measurement services.
+Secure the application using **Google OAuth2 authentication and JWT authorization**.
 
 ---
 
-## 🧠 Spring Concepts Used
+## 🔑 Security Technologies
 
-- Spring Framework
-- Spring Boot
-- Spring MVC
-- REST API Development
-- Dependency Injection
-- Spring Service Layer
-- Logging Framework
-- Spring Data JPA
+- Spring Security
+- OAuth2 Authentication
+- Google Sign-In
+- JWT (JSON Web Token)
+- Secure Session Handling
 
 ---
 
-## 🏗 Backend Architecture
+## 🔐 Authentication Flow
 
 ```
-Client Request
-      │
-      ▼
-REST Controller
-      │
-      ▼
-Service Layer
-      │
-      ▼
-Repository Layer
-      │
-      ▼
-Database
+User Login
+   │
+   ▼
+Google OAuth Authentication
+   │
+   ▼
+Backend Validation
+   │
+   ▼
+JWT Token Generated
+   │
+   ▼
+Secure API Access
 ```
-
----
-
-## 📦 Core Components
-
-| Component | Role |
-|----------|------|
-| Controller | REST API endpoints |
-| Service | Business logic |
-| Repository | Data persistence |
-| Entity | JPA domain objects |
 
 ---
 
 ## ✅ Implementation
 
-- Created **Spring Boot application**
-- Developed **RESTful APIs**
-- Implemented **Service and Repository layers**
-- Integrated **Spring Data JPA**
-- Added **structured logging**
+- Configured **Spring Security**
+- Integrated **Google OAuth2 login**
+- Implemented **JWT token generation**
+- Added **secure API authorization**
+- Created **user role management**
 
 🔗 Repository  
-- [feature/UC17-SpringBackend](https://github.com/GitHubArvind01/QuantityMeasurementApp/tree/feature/UC17-SpringBackend/src/main/java/com/app/quantitymeasurementapp)
+- [feature/UC18-GoogleAuthUserManagement](https://github.com/GitHubArvind01/QuantityMeasurementApp/tree/feature/UC18-GoogleAuthUserManagement/src/main/java/com/app/quantitymeasurementapp)
 
 ---
